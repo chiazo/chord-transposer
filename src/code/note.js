@@ -9,11 +9,6 @@ export const Direction = {
   DOWN: "DOWN",
 };
 
-// key signature
-// interval - half step, whole step
-// note
-// chord
-
 export class Note {
   static notes = ["A", "B", "C", "D", "E", "F", "G"];
   letter;
@@ -43,7 +38,7 @@ export class Note {
     return this.sign;
   }
 
-  enharmonics() {
+  getEnharmonic() {
     if (this.sign == Sign.NATURAL) {
       return this;
     }
@@ -79,7 +74,7 @@ export class Note {
   }
 
   equals(note) {
-    return this.isValidNote(note.letter, note.sign) && note.letter == this.getLetter() && note.sign == this.getSign();
+    return this.isValidNote(note.letter, note.sign) && ((note.letter == this.getLetter() && note.sign == this.getSign()) || (note.getEnharmonic().getLetter() == this.getLetter() && note.getEnharmonic().sign == this.getSign()));
   }
 
   #nextNote(note, direction) {

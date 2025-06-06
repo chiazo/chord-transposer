@@ -3,6 +3,12 @@ import { Direction } from "./note.js";
 export const Type = {
   MAJOR: "MAJOR",
   MINOR: "MINOR",
+  MAJOR_7: "MAJOR_7",
+  MINOR_7: "MINOR_7",
+  SUS_2: "SUS_2",
+  SUS_4: "SUS_4",
+  MAJOR_9: "MAJOR_9",
+  MINOR_9: "MINOR_9",
 };
 export class Scale {
   constructor(root, type = Type.MAJOR) {
@@ -12,7 +18,7 @@ export class Scale {
   }
 
   createScale() {
-    return this.type == Type.MAJOR
+    return this.type.indexOf(Type.MAJOR) >= 0 || this.type.indexOf("SUS") >= 0
       ? this.createMajorScale()
       : this.createMinorScale();
   }
