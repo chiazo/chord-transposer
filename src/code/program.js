@@ -50,26 +50,10 @@ export class Program {
 
 var program = new Program();
 var notesToFind = [
-  new Note("B"),
-  new Note("D", Sign.SHARP),
-  new Note("F", Sign.SHARP),
-  new Note("A", Sign.SHARP),
+  new Note("C"),
+  new Note("E"),
+  new Note("G"),
+  new Note("B", Sign.FLAT),
 ];
 
-// console.log(
-//   allChords
-//     .filter(
-//       (c) =>
-//         c.type == Type.MAJOR_7 &&
-//         c.root.sign == Sign.NATURAL &&
-//         c.root.getLetter() == "B"
-//     )
-//     .map((c) => c.scale.notes)
-// );
-
 console.log(program.findChord(notesToFind), notesToFind);
-// var scale = new Scale(new Note("E", Sign.FLAT));
-// scale.getCircleOfFifthScale(Sign.FLAT);
-// console.log(scale);
-// console.log("cof_sharps", Scale.cof_sharps.indexOf(scale.root.getName()));
-// console.log("cof_flats", Scale.cof_flats.indexOf(scale.root.getName()));

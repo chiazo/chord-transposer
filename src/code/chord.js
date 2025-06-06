@@ -12,24 +12,31 @@ export class Chord {
   createChord() {
     if ([Type.MAJOR, Type.MINOR].indexOf(this.type) >= 0) {
       return [this.scale.notes[0], this.scale.notes[2], this.scale.notes[4]];
-    } else if ([Type.MAJOR_7, Type.MINOR_7].indexOf(this.type) >= 0) {
+    } else if ([Type.MAJOR_SEVEN, Type.MINOR_SEVEN].indexOf(this.type) >= 0) {
       return [
         this.scale.notes[0],
         this.scale.notes[2],
         this.scale.notes[4],
         this.scale.notes[6],
       ];
-    } else if (this.type == Type.SUS_2) {
+    } else if (this.type == Type.SUS_TWO) {
       return [this.scale.notes[0], this.scale.notes[1], this.scale.notes[4]];
-    } else if (this.type == Type.SUS_4) {
+    } else if (this.type == Type.SUS_FOUR) {
       return [this.scale.notes[0], this.scale.notes[3], this.scale.notes[4]];
-    } else if ([Type.MAJOR_9, Type.MINOR_9].indexOf(this.type) >= 0) {
+    } else if ([Type.MAJOR_NINE, Type.MINOR_NINE].indexOf(this.type) >= 0) {
       return [
         this.scale.notes[0],
         this.scale.notes[2],
         this.scale.notes[4],
         this.scale.notes[6],
         this.scale.notes[1],
+      ];
+    } else if (this.type == Type.SEVEN) {
+      return [
+        this.scale.notes[0],
+        this.scale.notes[2],
+        this.scale.notes[4],
+        this.scale.notes[6],
       ];
     }
   }

@@ -3,18 +3,21 @@ import { Direction, Note, Sign } from "./note.js";
 export const Type = {
   MAJOR: "MAJOR",
   MINOR: "MINOR",
-  MAJOR_7: "MAJOR_7",
-  MINOR_7: "MINOR_7",
-  SUS_2: "SUS_2",
-  SUS_4: "SUS_4",
-  MAJOR_9: "MAJOR_9",
-  MINOR_9: "MINOR_9",
+  MAJOR_SEVEN: "MAJOR_SEVEN",
+  MINOR_SEVEN: "MINOR_SEVEN",
+  SUS_TWO: "SUS_TWO",
+  SUS_FOUR: "SUS_FOUR",
+  MAJOR_NINE: "MAJOR_NINE",
+  MINOR_NINE: "MINOR_NINE",
+  SEVEN: "SEVEN",
 };
 export class Scale {
   // whole-whole-half-whole-whole-whole-half
   static major_scale_pattern = "1101110";
   // whole-half-whole-whole-half-whole-whole
   static minor_scale_pattern = "1011011";
+  // whole-whole-half-whole-whole-half-whole
+  static mixolydian_scale_pattern = "1101101";
   static cof_sharps = ["C", "G", "D", "A", "E", "B", "F SHARP", "C SHARP"];
   static cof_flats = [
     "C",
@@ -34,6 +37,10 @@ export class Scale {
   }
 
   static createScale(root, type) {
+    if (type == Type.SEVEN) {
+      return Scale.createMixolydianScale(root);
+    }
+
     return type.indexOf(Type.MAJOR) >= 0 || type.indexOf("SUS") >= 0
       ? Scale.createMajorScale(root)
       : Scale.createMinorScale(root);
@@ -45,6 +52,10 @@ export class Scale {
 
   static createMinorScale(root) {
     return Scale.populateScale(root, Scale.minor_scale_pattern);
+  }
+
+  static createMixolydianScale(root) {
+    return Scale.populateScale(root, Scale.mixolydian_scale_pattern);
   }
 
   getCircleOfFifthScale(sign = Sign.SHARP) {
