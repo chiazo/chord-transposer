@@ -1,7 +1,8 @@
 import { Scale, Type } from "./scale.js";
-import { Note, Sign, Direction } from "./note.js";
+import { Direction, Note, allNotes } from "./note.js";
 export class Chord {
   constructor(root, type = Type.MAJOR) {
+    this.originalRoot = root;
     this.root = root;
     this.type = type;
     this.scale = new Scale(root, type);
@@ -23,15 +24,38 @@ export class Chord {
   }
 
   reset() {
+    this.root = this.originalRoot
+    this.scale = new Scale(this.root, this.type);
     this.notes = this.createChord()
   }
 
   transpose(direction = Direction.UP, wholeStep = false) {
     this.notes = this.notes.map(n => wholeStep ? n.wholeStep(direction) : n.halfStep(direction))
+    this.root = this.notes[0]
+    this.scale = new Scale(this.root, this.type);
   }
 
-  getEnharmonic() {
-    return this.notes.map(c => c.getEnharmonic());
+  getName() {
+    return `${this.root.getName()} ${this.type}`;
+  }
+
+  enharmonic() {
+    return this.notes.map(c => c.enharmonic());
+  }
+
+  sameNotes(notes) {
+    if (notes.map(n => n.getName()).toString() != this.notes.map(n => n.getName()).toString()) {
+      return false;
+    }
+
+    if (notes.map(n => n.enharmonic().getName()).toString() != this.notes.map(n => n.getName()).toString()) {
+      return false;
+    }
+
+    if (this.notes.map(n => n.enharmonic().getName()).toString() != notes.map(n => n.getName()).toString()) {
+      return false;
+    }
+    return true
   }
 
   equals(chord) {
@@ -39,18 +63,10 @@ export class Chord {
       return false;
     }
 
-    if (chord.notes.toString() != this.notes.toString()) {
-      return false;
-    }
-
-    if (chord.notes.map(c => c.getEnharmonic()).toString() != this.notes.toString()) {
-      return false;
-    }
-
-    if (this.notes.map(c => c.getEnharmonic()).toString() != chord.notes.toString()) {
-      return false;
-    }
-
-    return true;
+    return this.sameNotes(chord.notes)
   }
 }
+
+export const allChords = Object.entries(Type).flatMap(([k, v]) =>
+  allNotes.map(n => new Chord(new Note(n.getLetter()), v))
+);

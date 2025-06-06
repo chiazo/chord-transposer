@@ -45,6 +45,13 @@ export class Scale {
             : notes[notes.length - 1].halfStep(Direction.UP)
         )
       );
-    return notes;
+
+      // TODO: fix this to work with circle of fifths
+    for (let i = 1; i < notes.length; i++) {
+      if (notes[i-1].getLetter() == notes[i].getLetter()) {
+        notes[i] = notes[i].enharmonic()
+      } 
+    }
+    return notes
   }
 }

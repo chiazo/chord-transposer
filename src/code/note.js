@@ -38,7 +38,11 @@ export class Note {
     return this.sign;
   }
 
-  getEnharmonic() {
+  getName() {
+    return this.sign != Sign.NATURAL ? `${this.getLetter()} ${this.getSign()}` : `${this.getLetter()}`
+  }
+
+  enharmonic() {
     if (this.sign == Sign.NATURAL) {
       return this;
     }
@@ -57,8 +61,8 @@ export class Note {
       offset >= Note.notes.length
         ? 0
         : offset < 0
-        ? Note.notes.length - 1
-        : offset;
+          ? Note.notes.length - 1
+          : offset;
     var enharmSign = letterIdx > offset ? Sign.SHARP : Sign.FLAT;
 
     return new Note(Note.notes[enharmIdx], enharmSign);
@@ -74,7 +78,7 @@ export class Note {
   }
 
   equals(note) {
-    return this.isValidNote(note.letter, note.sign) && ((note.letter == this.getLetter() && note.sign == this.getSign()) || (note.getEnharmonic().getLetter() == this.getLetter() && note.getEnharmonic().sign == this.getSign()));
+    return this.isValidNote(note.letter, note.sign) && ((note.letter == this.getLetter() && note.sign == this.getSign()) || (note.enharmonic().getLetter() == this.getLetter() && note.enharmonic().sign == this.getSign()));
   }
 
   #nextNote(note, direction) {
@@ -87,12 +91,12 @@ export class Note {
       note.sign == Sign.NATURAL && !exemptNotes
         ? letterIdx
         : offset >= Note.notes.length
-        ? 0
-        : offset < 0
-        ? Note.notes.length - 1
-        : offset;
+          ? 0
+          : offset < 0
+            ? Note.notes.length - 1
+            : offset;
 
-    if (note.sign == Sign.SHARP && direction == Direction.DOWN) {
+    if ((note.sign == Sign.SHARP && direction == Direction.DOWN) || (note.sign == Sign.FLAT && direction == Direction.UP)) {
       return new Note(Note.notes[letterIdx], Sign.NATURAL);
     }
 
@@ -108,7 +112,7 @@ export class Note {
 
 let letters = ["A", "B", "C", "D", "E", "F", "G"];
 
-export const notes = letters
+export const allNotes = letters
   .map((l) => new Note(l, Sign.NATURAL))
   .concat(
     letters.map((l) => new Note(l, Sign.FLAT)).filter((n) => n.getLetter() !== null)
