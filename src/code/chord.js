@@ -13,25 +13,38 @@ export class Chord {
     if ([Type.MAJOR, Type.MINOR].indexOf(this.type) >= 0) {
       return [this.scale.notes[0], this.scale.notes[2], this.scale.notes[4]];
     } else if ([Type.MAJOR_7, Type.MINOR_7].indexOf(this.type) >= 0) {
-      return [this.scale.notes[0], this.scale.notes[2], this.scale.notes[4], this.scale.notes[6]];
+      return [
+        this.scale.notes[0],
+        this.scale.notes[2],
+        this.scale.notes[4],
+        this.scale.notes[6],
+      ];
     } else if (this.type == Type.SUS_2) {
       return [this.scale.notes[0], this.scale.notes[1], this.scale.notes[4]];
     } else if (this.type == Type.SUS_4) {
       return [this.scale.notes[0], this.scale.notes[3], this.scale.notes[4]];
     } else if ([Type.MAJOR_9, Type.MINOR_9].indexOf(this.type) >= 0) {
-      return [this.scale.notes[0], this.scale.notes[2], this.scale.notes[4], this.scale.notes[6], this.scale.notes[1]];
+      return [
+        this.scale.notes[0],
+        this.scale.notes[2],
+        this.scale.notes[4],
+        this.scale.notes[6],
+        this.scale.notes[1],
+      ];
     }
   }
 
   reset() {
-    this.root = this.originalRoot
+    this.root = this.originalRoot;
     this.scale = new Scale(this.root, this.type);
-    this.notes = this.createChord()
+    this.notes = this.createChord();
   }
 
   transpose(direction = Direction.UP, wholeStep = false) {
-    this.notes = this.notes.map(n => wholeStep ? n.wholeStep(direction) : n.halfStep(direction))
-    this.root = this.notes[0]
+    this.notes = this.notes.map((n) =>
+      wholeStep ? n.wholeStep(direction) : n.halfStep(direction)
+    );
+    this.root = this.notes[0];
     this.scale = new Scale(this.root, this.type);
   }
 
@@ -40,22 +53,24 @@ export class Chord {
   }
 
   enharmonic() {
-    return this.notes.map(c => c.enharmonic());
+    return this.notes.map((c) => c.enharmonic());
   }
 
   sameNotes(notes) {
-    if (notes.map(n => n.getName()).toString() != this.notes.map(n => n.getName()).toString()) {
-      return false;
-    }
+    var sameNoteNames =
+      notes.map((n) => n.getName()).toString() ==
+      this.notes.map((n) => n.getName()).toString();
+    var matchesEnharmonicsOneWay =
+      notes.map((n) => n.enharmonic().getName()).toString() ==
+      this.notes.map((n) => n.getName()).toString();
 
-    if (notes.map(n => n.enharmonic().getName()).toString() != this.notes.map(n => n.getName()).toString()) {
-      return false;
-    }
+    var matchesEnharmonicsOtherWay =
+      this.notes.map((n) => n.enharmonic().getName()).toString() ==
+      notes.map((n) => n.getName()).toString();
 
-    if (this.notes.map(n => n.enharmonic().getName()).toString() != notes.map(n => n.getName()).toString()) {
-      return false;
-    }
-    return true
+    return (
+      sameNoteNames || matchesEnharmonicsOneWay || matchesEnharmonicsOtherWay
+    );
   }
 
   equals(chord) {
@@ -63,10 +78,14 @@ export class Chord {
       return false;
     }
 
-    return this.sameNotes(chord.notes)
+    return this.sameNotes(chord.notes);
   }
 }
 
-export const allChords = Object.entries(Type).flatMap(([k, v]) =>
-  allNotes.map(n => new Chord(new Note(n.getLetter()), v))
+var chords = Object.entries(Type).flatMap(([k, v]) =>
+  allNotes.map((n) => new Chord(new Note(n.getLetter(), n.getSign()), v))
+);
+
+export const allChords = Array.from(
+  new Map(chords.map((c) => [c.getName(), c])).values()
 );

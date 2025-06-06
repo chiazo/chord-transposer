@@ -1,4 +1,4 @@
-import { Direction } from "./note.js";
+import { Direction, Note, Sign } from "./note.js";
 
 export const Type = {
   MAJOR: "MAJOR",
@@ -11,30 +11,74 @@ export const Type = {
   MINOR_9: "MINOR_9",
 };
 export class Scale {
+  // whole-whole-half-whole-whole-whole-half
+  static major_scale_pattern = "1101110";
+  // whole-half-whole-whole-half-whole-whole
+  static minor_scale_pattern = "1011011";
+  static cof_sharps = ["C", "G", "D", "A", "E", "B", "F SHARP", "C SHARP"];
+  static cof_flats = [
+    "C",
+    "F",
+    "B FLAT",
+    "E FLAT",
+    "A FLAT",
+    "D FLAT",
+    "G FLAT",
+    "C FLAT",
+  ];
+
   constructor(root, type = Type.MAJOR) {
     this.root = root;
     this.type = type;
-    this.notes = this.createScale();
+    this.notes = Scale.createScale(root, type);
   }
 
-  createScale() {
-    return this.type.indexOf(Type.MAJOR) >= 0 || this.type.indexOf("SUS") >= 0
-      ? this.createMajorScale()
-      : this.createMinorScale();
+  static createScale(root, type) {
+    return type.indexOf(Type.MAJOR) >= 0 || type.indexOf("SUS") >= 0
+      ? Scale.createMajorScale(root)
+      : Scale.createMinorScale(root);
   }
 
-  createMajorScale() {
-    // whole-whole-half-whole-whole-whole-half
-    return this.populateScale("1101110");
+  static createMajorScale(root) {
+    return Scale.populateScale(root, Scale.major_scale_pattern);
   }
 
-  createMinorScale() {
-    // whole-half-whole-whole-half-whole-whole
-    return this.populateScale("1011011");
+  static createMinorScale(root) {
+    return Scale.populateScale(root, Scale.minor_scale_pattern);
   }
 
-  populateScale(pattern) {
-    var notes = [this.root];
+  getCircleOfFifthScale(sign = Sign.SHARP) {
+    var cof_base = Scale.populateScale(
+      new Note("C"),
+      Scale.major_scale_pattern
+    );
+    var sharp_count = Scale.cof_sharps.indexOf(this.root.getName());
+    var flat_count = Scale.cof_flats.indexOf(this.root.getName());
+    var note_in_base = cof_base.find(
+      (n) => n.getLetter() == this.root.getLetter()
+    );
+
+    if (
+      (sign == Sign.SHARP && sharp_count == 0) ||
+      (sign == Sign.FLAT && flat_count == 0)
+    ) {
+      return;
+    }
+
+    console.log(
+      `note to make ${sign}:`,
+      cof_base[cof_base.indexOf(note_in_base) - 1]
+    );
+
+    if (sign == Sign.SHARP) {
+      console.log("cof_sharps", sharp_count);
+    } else {
+      console.log("cof_flats", flat_count);
+    }
+  }
+
+  static populateScale(root, pattern) {
+    var notes = [root];
     pattern
       .split("")
       .slice(0, 6)
@@ -46,12 +90,12 @@ export class Scale {
         )
       );
 
-      // TODO: fix this to work with circle of fifths
+    // TODO: fix this to work with circle of fifths
     for (let i = 1; i < notes.length; i++) {
-      if (notes[i-1].getLetter() == notes[i].getLetter()) {
-        notes[i] = notes[i].enharmonic()
-      } 
+      if (notes[i - 1].getLetter() == notes[i].getLetter()) {
+        notes[i] = notes[i].enharmonic();
+      }
     }
-    return notes
+    return notes;
   }
 }
