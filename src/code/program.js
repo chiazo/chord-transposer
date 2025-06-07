@@ -18,20 +18,20 @@ export class Program {
 
   // given multiple chords and a fret, returns which note is being played
   transposeChords(chords, fret) {
-    return chords.map((c) => this.transpose(c, fret));
+    return chords.map((c) => c.transpose(fret));
   }
 
   // given multiple notes, returns which chord is being played
   findChord(notes) {
     for (const chord of allChords) {
       if (chord.sameNotes(notes)) {
-        return chord.getName();
+        return chord;
       }
     }
   }
 
   getNotes(chords) {
-    return this.transposeChords(chords, 4).map((c) => c.notes);
+    return chords.transposeChords(4).map((c) => c.notes);
   }
 
   getUniqueNotes(chords) {
@@ -49,11 +49,14 @@ export class Program {
 }
 
 var program = new Program();
-var notesToFind = [
-  new Note("C"),
-  new Note("E"),
-  new Note("G"),
-  new Note("B", Sign.FLAT),
-];
+var notesToFind = [new Note("F"), new Note("A"), new Note("C", Sign.SHARP)];
 
-console.log(program.findChord(notesToFind), notesToFind);
+console.log(
+  "to find",
+  notesToFind.map((n) => n.getName())
+);
+console.log("------- searching .... ------");
+console.log(
+  `found ${program.findChord(notesToFind).getName()}!`,
+  program.findChord(notesToFind).notes.map((n) => n.getName())
+);

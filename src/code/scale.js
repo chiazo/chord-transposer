@@ -10,6 +10,8 @@ export const Type = {
   MAJOR_NINE: "MAJOR_NINE",
   MINOR_NINE: "MINOR_NINE",
   SEVEN: "SEVEN",
+  DIMINISHED: "DIMINISHED",
+  AUGMENTED: "AUGMENTED",
 };
 export class Scale {
   // whole-whole-half-whole-whole-whole-half
@@ -18,6 +20,12 @@ export class Scale {
   static minor_scale_pattern = "1011011";
   // whole-whole-half-whole-whole-half-whole
   static mixolydian_scale_pattern = "1101101";
+  // half-whole-half-whole-half-whole-half
+  static diminished_scale_pattern = "0101010";
+  // whole-whole-whole-whole-whole-whole
+  static whole_tone_scale_pattern = "111111";
+  // minor3rd-half-minor3d-half-minor3rd-half
+  static augmented_scale_pattern = "101010";
   static cof_sharps = ["C", "G", "D", "A", "E", "B", "F SHARP", "C SHARP"];
   static cof_flats = [
     "C",
@@ -41,7 +49,11 @@ export class Scale {
       return Scale.createMixolydianScale(root);
     }
 
-    return type.indexOf(Type.MAJOR) >= 0 || type.indexOf("SUS") >= 0
+    if (type == Type.DIMINISHED) {
+      return Scale.createDiminishedScale(root);
+    }
+
+    return [Type.MAJOR, Type.AUGMENTED].includes(type) || type.includes("SUS")
       ? Scale.createMajorScale(root)
       : Scale.createMinorScale(root);
   }
@@ -56,6 +68,19 @@ export class Scale {
 
   static createMixolydianScale(root) {
     return Scale.populateScale(root, Scale.mixolydian_scale_pattern);
+  }
+
+  static createDiminishedScale(root) {
+    return Scale.populateScale(root, Scale.diminished_scale_pattern);
+  }
+
+  static createWholeToneScale(root) {
+    return Scale.populateScale(root, Scale.whole_tone_scale_pattern);
+  }
+
+  // ironically doesn't work on augmented, good for dominant 7th augmented chords (7#5)
+  static createAugmentedScale(root) {
+    return Scale.populateScale(root, Scale.augmented_scale_pattern);
   }
 
   getCircleOfFifthScale(sign = Sign.SHARP) {
@@ -92,7 +117,7 @@ export class Scale {
     var notes = [root];
     pattern
       .split("")
-      .slice(0, 6)
+      .slice(0, pattern.length - 1)
       .forEach((interval) =>
         notes.push(
           parseInt(interval)
