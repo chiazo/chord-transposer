@@ -49,7 +49,12 @@ export class Program {
 }
 
 var program = new Program();
-var notesToFind = [new Note("F"), new Note("A"), new Note("C", Sign.SHARP)];
+var notesToFind = [
+  new Note("F", Sign.SHARP),
+  new Note("A", Sign.SHARP),
+  new Note("C", Sign.SHARP),
+  new Note("G", Sign.SHARP),
+];
 
 console.log(
   "to find",

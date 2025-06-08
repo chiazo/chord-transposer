@@ -44,6 +44,13 @@ export class Chord {
         this.scale.notes[2],
         this.scale.notes[4].halfStep(),
       ];
+    } else if (this.type == Type.ADD_NINE) {
+      return [
+        this.scale.notes[0],
+        this.scale.notes[2],
+        this.scale.notes[4],
+        this.scale.notes[1],
+      ];
     }
   }
 
@@ -72,6 +79,10 @@ export class Chord {
   }
 
   sameNotes(otherNotes) {
+    if (otherNotes.length !== this.notes.length) {
+      return false;
+    }
+
     var otherNoteLetters = otherNotes.map(
       (n) => `${n.getLetter()} ${n.getSign()}`
     );
@@ -79,10 +90,7 @@ export class Chord {
       (n) => `${n.getLetter()} ${n.getSign()}`
     );
 
-    if (
-      otherNoteLetters.length == currNoteLetters.length &&
-      otherNoteLetters.every((n) => currNoteLetters.includes(n))
-    ) {
+    if (otherNoteLetters.every((n) => currNoteLetters.includes(n))) {
       return true;
     }
 

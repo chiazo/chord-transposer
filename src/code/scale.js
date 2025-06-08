@@ -12,6 +12,7 @@ export const Type = {
   SEVEN: "SEVEN",
   DIMINISHED: "DIMINISHED",
   AUGMENTED: "AUGMENTED",
+  ADD_NINE: "ADD_NINE",
 };
 export class Scale {
   // whole-whole-half-whole-whole-whole-half
@@ -53,7 +54,8 @@ export class Scale {
       return Scale.createDiminishedScale(root);
     }
 
-    return [Type.MAJOR, Type.AUGMENTED].includes(type) || type.includes("SUS")
+    return [Type.MAJOR, Type.AUGMENTED, Type.ADD_NINE].includes(type) ||
+      type.includes("SUS")
       ? Scale.createMajorScale(root)
       : Scale.createMinorScale(root);
   }
