@@ -1,6 +1,6 @@
-import { Scale, Type } from "./scale.js";
-import { Note, Sign, Direction } from "./note.js";
-import { Chord, allChords } from "./chord.js";
+import { Type } from "./scale.js";
+import { Note, Sign } from "./note.js";
+import { allChords } from "./chord.js";
 
 /***
  * Position
@@ -53,11 +53,15 @@ export class Fretboard {
     return this.chords.map((c) => c.getName());
   }
 
+  getCapo() {
+    return this.capo;
+  }
+
   addCapo(position = 1) {
     if (position > Fretboard.totalFrets || position < 0) {
       return;
     }
-    if (position == this.capo) {
+    if (position === this.capo) {
       return;
     }
 
@@ -95,26 +99,12 @@ export class Fretboard {
     this.capo = 0;
   }
 
+  addPosition(position) {
+    this.positions.push(position);
+  }
+
   addChord(chord) {
     this.chords.push(chord);
-
-    var potentialPositions = [];
-    for (let i = 0; i < Fretboard.totalFrets; i++) {
-      chord.notes.map((n) => {
-        var openSpots = this.getOpenSpots(this.getRelativeNotes(i), n);
-        if (openSpots.length > 0) {
-          // TODO: only add a position if it's not an open string value (e.g. E minor)
-          potentialPositions.push(new Position(openSpots[0], n, this.capo + i));
-        }
-      });
-
-      if (potentialPositions.length == chord.notes.length) {
-        this.positions = potentialPositions;
-        return;
-      } else {
-        potentialPositions = [];
-      }
-    }
   }
 
   removeChord(chord) {
@@ -132,19 +122,41 @@ export class Fretboard {
     };
   }
 
-  getOpenSpots(availableNotes, note) {
-    var noteName = note.getName();
-    var openSpots = [];
-    Object.entries(availableNotes).forEach(([string, n]) => {
-      if (n.getName() == noteName) {
-        openSpots.push(string);
+  getOpenSpots(fret = 0, limit = Fretboard.totalFrets) {
+    var openSpots = {};
+    for (let i = 0; i < limit; i++) {
+      var offset = fret + i;
+      if (this.capo + offset > Fretboard.totalFrets) {
+        break;
       }
-    });
+      var availableNotes = this.getRelativeNotes(offset);
+      var enharmonics = Object.values({ ...availableNotes }).map((n) =>
+        n.enharmonic()
+      );
+      Object.entries(availableNotes).forEach(([string, note]) => {
+        var noteName = note.getName();
+        var newSpot = { capo: this.capo + offset, string: string };
+        if (noteName in openSpots) {
+          openSpots[noteName].push(newSpot);
+        } else {
+          openSpots[noteName] = [newSpot];
+        }
+      });
+      Object.entries(enharmonics).forEach(([string, note]) => {
+        var noteName = note.getName();
+        var newSpot = { capo: this.capo + offset, string: string };
+        if (noteName in openSpots) {
+          openSpots[noteName].push(newSpot);
+        } else {
+          openSpots[noteName] = [newSpot];
+        }
+      });
+    }
     return openSpots;
   }
 
   getRelativeNotes(fret = 0) {
-    if (fret == 0) {
+    if (fret === 0) {
       return this.openStringNotes;
     }
     var originalCapo = this.capo;
@@ -156,7 +168,7 @@ export class Fretboard {
 }
 
 const logBoardState = (board) => {
-  console.log(" ===== Fretboard State ===== ");
+  console.log(" ======= Fretboard State ======= ");
   console.log("capo", board.capo);
   console.log(
     "chords",
@@ -183,9 +195,9 @@ var board = new Fretboard();
 board.addChord(
   allChords.filter(
     (c) =>
-      c.root.getLetter() == "E" &&
-      c.root.sign == Sign.NATURAL &&
-      c.type == Type.MINOR
+      c.root.getLetter() === "E" &&
+      c.root.sign === Sign.NATURAL &&
+      c.type === Type.MINOR
   )[0]
 );
 logBoardState(board);

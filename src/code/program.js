@@ -1,6 +1,5 @@
-import { Scale, Type } from "./scale.js";
-import { Note, Sign, allNotes, Direction } from "./note.js";
-import { Chord, allChords } from "./chord.js";
+import { Note, Sign } from "./note.js";
+import { allChords } from "./chord.js";
 import { Fretboard } from "./fretboard.js";
 
 export class Program {
@@ -31,7 +30,9 @@ export class Program {
   }
 
   getNotes(chords) {
-    return chords.transposeChords(4).map((c) => c.notes);
+    var result = this.transposeChords(chords, 4);
+    console.log("result", chords);
+    return result.map((c) => c.notes);
   }
 
   getUniqueNotes(chords) {
@@ -65,3 +66,4 @@ console.log(
   `found ${program.findChord(notesToFind).getName()}!`,
   program.findChord(notesToFind).notes.map((n) => n.getName())
 );
+console.log(program.getUniqueNotes([program.findChord(notesToFind)]));

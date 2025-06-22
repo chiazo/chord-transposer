@@ -1,11 +1,11 @@
 import { Scale, Type } from "./scale.js";
-import { Direction, Note, Sign, allNotes } from "./note.js";
+import { Direction, Note, allNotes } from "./note.js";
 export class Chord {
   constructor(root, type = Type.MAJOR) {
-    this.originalRoot = root;
-    this.root = root;
+    this.root = typeof root == "string" ? new Note(root) : root;
+    this.originalRoot = this.root;
     this.type = type;
-    this.scale = new Scale(root, type);
+    this.scale = new Scale(this.root, type);
     this.notes = this.createChord();
   }
 
@@ -19,9 +19,9 @@ export class Chord {
         this.scale.notes[4],
         this.scale.notes[6],
       ];
-    } else if (this.type == Type.SUS_TWO) {
+    } else if (this.type === Type.SUS_TWO) {
       return [this.scale.notes[0], this.scale.notes[1], this.scale.notes[4]];
-    } else if (this.type == Type.SUS_FOUR) {
+    } else if (this.type === Type.SUS_FOUR) {
       return [this.scale.notes[0], this.scale.notes[3], this.scale.notes[4]];
     } else if ([Type.MAJOR_NINE, Type.MINOR_NINE].includes(this.type)) {
       return [
@@ -31,20 +31,20 @@ export class Chord {
         this.scale.notes[6],
         this.scale.notes[1],
       ];
-    } else if (this.type == Type.SEVEN) {
+    } else if (this.type === Type.SEVEN) {
       return [
         this.scale.notes[0],
         this.scale.notes[2],
         this.scale.notes[4],
         this.scale.notes[6],
       ];
-    } else if (this.type == Type.AUGMENTED) {
+    } else if (this.type === Type.AUGMENTED) {
       return [
         this.scale.notes[0],
         this.scale.notes[2],
         this.scale.notes[4].halfStep(),
       ];
-    } else if (this.type == Type.ADD_NINE) {
+    } else if (this.type === Type.ADD_NINE) {
       return [
         this.scale.notes[0],
         this.scale.notes[2],
@@ -112,7 +112,7 @@ export class Chord {
               (n) => `${n.enharmonic().getLetter()} ${n.enharmonic().getSign()}`
             )
             .includes(`${note.getLetter()} ${note.getSign()}`)
-      ).length == 0;
+      ).length === 0;
 
     return matchesEnharmonics;
   }
@@ -136,9 +136,9 @@ export const allChords = Array.from(
 // for debugging
 //   .filter(
 //   (c) =>
-//     c.root.getLetter() == "E" &&
-//     c.root.sign == Sign.FLAT &&
-//     c.type == Type.AUGMENTED
+//     c.root.getLetter() === "E" &&
+//     c.root.sign === Sign.FLAT &&
+//     c.type === Type.AUGMENTED
 // );
 
 // console.log(allChords[0].scale);

@@ -46,11 +46,11 @@ export class Scale {
   }
 
   static createScale(root, type) {
-    if (type == Type.SEVEN) {
+    if (type === Type.SEVEN) {
       return Scale.createMixolydianScale(root);
     }
 
-    if (type == Type.DIMINISHED) {
+    if (type === Type.DIMINISHED) {
       return Scale.createDiminishedScale(root);
     }
 
@@ -93,12 +93,12 @@ export class Scale {
     var sharp_count = Scale.cof_sharps.indexOf(this.root.getName());
     var flat_count = Scale.cof_flats.indexOf(this.root.getName());
     var note_in_base = cof_base.find(
-      (n) => n.getLetter() == this.root.getLetter()
+      (n) => n.getLetter() === this.root.getLetter()
     );
 
     if (
-      (sign == Sign.SHARP && sharp_count == 0) ||
-      (sign == Sign.FLAT && flat_count == 0)
+      (sign === Sign.SHARP && sharp_count === 0) ||
+      (sign === Sign.FLAT && flat_count === 0)
     ) {
       return;
     }
@@ -108,7 +108,7 @@ export class Scale {
       cof_base[cof_base.indexOf(note_in_base) - 1]
     );
 
-    if (sign == Sign.SHARP) {
+    if (sign === Sign.SHARP) {
       console.log("cof_sharps", sharp_count);
     } else {
       console.log("cof_flats", flat_count);
@@ -130,7 +130,7 @@ export class Scale {
 
     // TODO: fix this to work with circle of fifths
     for (let i = 1; i < notes.length; i++) {
-      if (notes[i - 1].getLetter() == notes[i].getLetter()) {
+      if (notes[i - 1].getLetter() === notes[i].getLetter()) {
         notes[i] = notes[i].enharmonic();
       }
     }
